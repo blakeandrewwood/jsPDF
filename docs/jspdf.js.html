@@ -3064,7 +3064,6 @@ function jsPDF(options) {
    *                          'datauristring'/'dataurlstring' -> (string)&lt;br/>
    *                          'datauri'/'dataurl' -> (undefined) -> change location to generated datauristring/dataurlstring&lt;br/>
    *                          'dataurlnewwindow' -> (window | null | undefined) throws error if global isn't a window object(node)&lt;br/>
-   *                          'pdfobjectnewwindow' -> (window | null) throws error if global isn't a window object(node)&lt;br/>
    *                          'pdfjsnewwindow' -> (wind | null)
    * @param {Object|string} options An object providing some additional signalling to PDF generator.&lt;br/>
    *                                Possible options are 'filename'.&lt;br/>
@@ -3132,42 +3131,6 @@ function jsPDF(options) {
           ";base64," +
           dataURI
         );
-      case "pdfobjectnewwindow":
-        if (
-          Object.prototype.toString.call(globalObject) === "[object Window]"
-        ) {
-          var pdfObjectUrl =
-            "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js";
-          var integrity =
-            ' integrity="sha512-4ze/a9/4jqu+tX9dfOqJYSvyYd5M6qum/3HpCLr+/Jqf0whc37VUbkpNGHR7/8pSnCFw47T1fmIpwBV7UySh3g==" crossorigin="anonymous"';
-
-          if (options.pdfObjectUrl) {
-            pdfObjectUrl = options.pdfObjectUrl;
-            integrity = "";
-          }
-
-          var htmlForNewWindow =
-            "&lt;html>" +
-            '&lt;style>html, body { padding: 0; margin: 0; } iframe { width: 100%; height: 100%; border: 0;}  &lt;/style>&lt;body>&lt;script src="' +
-            pdfObjectUrl +
-            '"' +
-            integrity +
-            '>&lt;/script>&lt;script >PDFObject.embed("' +
-            this.output("dataurlstring") +
-            '", ' +
-            JSON.stringify(options) +
-            ");&lt;/script>&lt;/body>&lt;/html>";
-          var nW = globalObject.open();
-
-          if (nW !== null) {
-            nW.document.write(htmlForNewWindow);
-          }
-          return nW;
-        } else {
-          throw new Error(
-            "The option pdfobjectnewwindow just works in a browser-environment."
-          );
-        }
       case "pdfjsnewwindow":
         if (
           Object.prototype.toString.call(globalObject) === "[object Window]"
